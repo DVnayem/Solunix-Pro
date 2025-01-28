@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solunix</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #2a0d3b, #3b1a58, #5c2d91);
+            color: #d4b0ff;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .tasks-section {
+            display: none;
+            height: 100vh;
+            background: #3b1a58;
+            border-radius: 0;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1, h2 {
+            color: #ffdb70;
+        }
+
+        h2 {
+            margin-bottom: -5px;
+            margin-top: -25px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #e0c1ff;
+            margin-bottom: 10px;
+        }
+
+        .points-section {
+            background: #3b1a58;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .tap-circle {
+            width: 160px;
+            height: 160px;
+            margin: 20px auto;
+            background: radial-gradient(circle, #b084f8, #6a2594, #ff8c00);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #b084f8, 0 0 40px #6a2594;
+            cursor: pointer;
+            transition: transform 0.15s ease-in-out, box-shadow 0.3s ease;
+        }
+
+        .tap-circle:active {
+            transform: scale(0.9);
+            box-shadow: 0 0 10px #b084f8, 0 0 20px #6a2594;
+        }
+
+        .task {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            background: #4b236e;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .task .bonus {
+            font-size: 12px;
+            color: #e6cefe;
+            margin-top: 5px;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+        }
+
+        .task button {
+            align-self: flex-end;
+            padding: 8px 12px;
+            color: #fff;
+            background: #ffdb70;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .rub-balance {
+            background: #2a0d3b;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #e0c1ff;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            background: linear-gradient(90deg, #2a0d3b, #3b1a58, #5c2d91);
+            border-top: 2px solid #ffdb70;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .nav-bar button {
+            background: #ffdb70;
+            border: none;
+            color: #3b1a58;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s;
+        }
+
+        .nav-bar button.active {
+            background: #ff8c00;
+            color: #fff;
+        }
+
+        .nav-bar button:hover {
+            background: #ffaf40;
+            transform: scale(1.1);
+        }
+
+        @keyframes verifying {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .verifying {
+            animation: verifying 1s infinite;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #4b236e;
+            color: #e0c1ff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1000;
+        }
+
+        .popup button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #ffdb70;
+            color: #3b1a58;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="home">
+        <h1>Tap to Mine Solunix</h1>
+        <div class="points-section">
+            <p>You Earned: <span id="points">0</span></p>
+            <div class="tap-circle" onclick="incrementPoints()"></div>
+        </div>
+    </div>
+
+    <div class="container tasks-section" id="tasks">
+        <h2>DAILY TASKS</h2>
+        <p class="subtitle">Complete tasks to earn RUB points!</p>
+        <div class="rub-balance">Your Balance: <span id="rub-balance">0</span> RUB</div>
+        <div class="task">
+            <div>
+                <span>Complete Human Verification</span>
+                <span class="bonus">+ 2500 RUB</span>
+            </div>
+            <button onclick="startTask(1, 'https://t.me/tapcoinsbot/app?startapp=ref_n2kxMG-page_bioMatrixScan')" id="task-btn-1">Start</button>
+        </div>
+        <div class="task">
+            <div>
+                <span>Join Channel and Spain 3 Time</span>
+                <span class="bonus">+ 1500 RUB</span>
+            </div>
+            <button onclick="startTask(2, 'https://t.me/LuckyDrawMasterBot/app?startapp=Y2g9a1FqOXh2SFI3RyZnPXNwJmw9a1FqOXh2SFI3RyZzbz1TaGFyZSZ1PTc0NzYyMjYyMzg=')" id="task-btn-2">Start</button>
+        </div>
+        <div class="task">
+            <div>
+                <span>Play For 2 Minutes</span>
+                <span class="bonus">+ 2000 RUB</span>
+            </div>
+            <button onclick="startTask(3, 'https://t.me/kittyverse_ai_bot/play?startapp=u7302461980')" id="task-btn-3">Start</button>
+        </div>
+        <div class="task">
+            <div>
+                <span>Start Mining and Use It</span>
+                <span class="bonus">+ 1800 RUB</span>
+            </div>
+            <button onclick="startTask(4, 'https://t.me/GenkiMinerBot/GenkiMiner?startapp=T9qRvb49')" id="task-btn-4">Start</button>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <button class="active" onclick="showSection('home')">Home</button>
+        <button onclick="showSection('tasks')">Tasks</button>
+    </div>
+
+    <div class="popup" id="popup">
+        <p>✔️ Task Completed! But you’re already joined!</p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <script>
+        let points = localStorage.getItem('points') ? parseInt(localStorage.getItem('points')) : 0;
+        let rubBalance = localStorage.getItem('rubBalance') ? parseInt(localStorage.getItem('rubBalance')) : 0;
+        document.getElementById('points').textContent = points;
+        document.getElementById('rub-balance').textContent = rubBalance;
+
+        function incrementPoints() {
+            points += 10;
+            document.getElementById('points').textContent = points;
+            localStorage.setItem('points', points);
+        }
+
+        function startTask(taskId, link) {
+            const taskButton = document.getElementById(`task-btn-${taskId}`);
+            taskButton.disabled = true;
+            taskButton.textContent = 'Verifying...';
+            taskButton.classList.add('verifying');
+            window.open(link, '_blank');
+
+            setTimeout(() => {
+                taskButton.textContent = 'Completed';
+                taskButton.classList.remove('verifying');
+                taskButton.disabled = true;
+
+                const reward = parseInt(taskButton.previousElementSibling.querySelector('.bonus').textContent.match(/\d+/)[0]);
+                rubBalance += reward;
+                document.getElementById('rub-balance').textContent = rubBalance;
+                localStorage.setItem('rubBalance', rubBalance);
+                showPopup();
+            }, 1200000); // 20 minutes
+        }
+
+        function showPopup() {
+            const popup = document.getElementById('popup');
+            popup.style.display = 'block';
+        }
+
+        function closePopup() {
+            const popup = document.getElementById('popup');
+            popup.style.display = 'none';
+        }
+
+        function showSection(section) {
+            document.getElementById('home').style.display = section === 'home' ? 'flex' : 'none';
+            document.getElementById('tasks').style.display = section === 'tasks' ? 'flex' : 'none';
+
+            const buttons = document.querySelectorAll('.nav-bar button');
+            buttons.forEach(button => button.classList.remove('active'));
+            document.querySelector(`.nav-bar button[onclick="showSection('${section}')"]`).classList.add('active');
+        }
+    </script>
+</body>
+</html>
